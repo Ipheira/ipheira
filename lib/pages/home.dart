@@ -11,6 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -31,6 +32,13 @@ class _HomePageState extends State<HomePage> {
                     alignment: Alignment.bottomCenter // alterado aqui
                     ),
                 color: Colors.white),
+                    image: DecorationImage(
+                    image: NetworkImage(ImageUrl.background.value),
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.bottomCenter // alterado aqui
+                ),
+              color: Colors.white
+            ),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -46,6 +54,7 @@ class _HomePageState extends State<HomePage> {
                       ImageUrl.logo.value,
                       fit: BoxFit.fill,
                     ),
+                    child: Image.network(ImageUrl.logo.value, fit: BoxFit.fill,),
                   ),
                   RichText(
                     textAlign: TextAlign.center,
@@ -62,6 +71,10 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(
                                 color: Color.fromRGBO(77, 167, 104, 1),
                                 fontSize: 19)),
+                          text: 'Ipheira\n',
+                          style: TextStyle(color: Color.fromRGBO(77,167,104,1),
+                              fontSize: 19
+                        )),
                       ],
                     ),
                   ),
@@ -70,6 +83,7 @@ class _HomePageState extends State<HomePage> {
                     child: TextFormField(
                       textAlign: TextAlign.start,
                       onChanged: (text) {
+                      onChanged: (text){
                         setState(() {});
                       },
                       controller: emailController,
@@ -80,6 +94,17 @@ class _HomePageState extends State<HomePage> {
                         fillColor: Color.fromRGBO(200, 200, 200, 1),
                         filled: true,
                       ),
+                        fillColor: Color.fromRGBO(200,200,200,1),
+                        filled: true,
+                      ),
+                      validator: (value){
+                        if (value == null || value == "") {
+                          return "O valor de email deve ser preenchido";
+                        }
+                        if (!value.contains("@") || !value.contains(".") || value.length < 4){
+                          return "O email deve ser válido";
+                        }
+                      },
                     ),
                   ),
                   Padding(
@@ -89,6 +114,7 @@ class _HomePageState extends State<HomePage> {
                       controller: passwordController,
                       obscureText: true,
                       onChanged: (text) {
+                      onChanged: (text){
                         setState(() {});
                       },
                       keyboardType: TextInputType.visiblePassword,
@@ -116,6 +142,30 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 33, vertical: 13)),
                       child: const Text("Login"),
+                        fillColor: Color.fromRGBO(200,200,200,1),
+                        filled: true,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.length < 4) {
+                          return "A senha deve ser válida";
+                        }
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 8),
+                    child: ElevatedButton(
+                        onPressed: () {
+                          if(_formKey.currentState!.validate()){
+                            print(emailController.text);
+                            print(passwordController.text);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          textStyle: const TextStyle(fontSize: 18),
+                          padding: const EdgeInsets.symmetric(horizontal: 33, vertical: 13)
+                        ),
+                        child: const Text("Login"),
                     ),
                   ),
                   GestureDetector(
@@ -132,6 +182,11 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(
                     height: 7,
                   ),
+                        decoration: TextDecoration.underline,
+                        color: Color.fromRGBO(0,102,51,1)
+                      ),
+                    ),
+                  ),
                   GestureDetector(
                     onTap: () {
                       // ação a ser executada ao clicar no hyperlink
@@ -146,6 +201,10 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(
                     height: 10,
                   ),
+                          color: Colors.red
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -153,5 +212,22 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+  // botaoEnviarClicado() {
+  //   String email = _emailController.text;
+  //   String senha = _senhaController.text;
+  //   String nome = _nomeController.text;
+  //
+  //   if (_formKey.currentState!.validate()) {
+  //     if (isEntrando) {
+  //       _entrarUsuario(email: email, senha: senha);
+  //     } else {
+  //       _criarUsuario(email: email, senha: senha, nome: nome);
+  //     }
+  //   }
+  // }
+
+  _entrarUsuario({required String email, required String senha}) {
+    print("Entrar usuário $email, $senha");
   }
 }

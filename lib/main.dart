@@ -10,10 +10,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  firestore.collection("Só pra testar").doc("Testando").set({
-    "funcionou?": true
-  });
   runApp(const MaterialApp(
     home: MyApp(),
   ));
