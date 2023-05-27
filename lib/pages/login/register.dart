@@ -87,38 +87,48 @@ class _RegisterFormState extends State<RegisterForm> {
                   "Crie Sua Conta",
                   style: TextStyle(fontSize: 20),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: ListTile(
+                Align(
+                  alignment: Alignment.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: ListTile(
                           title: const Text("Cliente"),
                           minLeadingWidth: 0,
                           leading: Radio<int>(
-                            value: 0, //0 => para Cliente
+                            value: 0, // 0 => para Cliente
                             groupValue: userTypeController,
                             onChanged: (value) {
                               setState(() {
                                 userTypeController = value!;
                               });
                             },
-                          )),
-                    ),
-                    Expanded(
-                      child: ListTile(
-                          title: const Text("Lojista"),
-                          minLeadingWidth: 10,
-                          leading: Radio<int>(
-                            value: 1, // 1 => para Lojista
-                            groupValue: userTypeController,
-                            onChanged: (value) {
-                              setState(() {
-                                userTypeController = value!;
-                              });
-                            },
-                          )),
-                    ),
-                  ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left:
+                                  10), // Adicionado um padding para compensar o comprimento diferente do título
+                          child: ListTile(
+                            title: const Text("Lojista"),
+                            minLeadingWidth: 0,
+                            leading: Radio<int>(
+                              value: 1, // 1 => para Lojista
+                              groupValue: userTypeController,
+                              onChanged: (value) {
+                                setState(() {
+                                  userTypeController = value!;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(
                   height: 8,
@@ -135,14 +145,14 @@ class _RegisterFormState extends State<RegisterForm> {
                     },
                     keyboardType: TextInputType.visiblePassword,
                     decoration: const InputDecoration(
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                      border: OutlineInputBorder(),
-                      hintText: 'Nome Completo',
-                      hintStyle: TextStyle(color: Colors.black),
-                      fillColor: Color.fromRGBO(200, 200, 200, 1),
-                      filled: true,
-                    ),
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                        border: OutlineInputBorder(),
+                        hintText: 'Nome Completo',
+                        hintStyle: TextStyle(color: Colors.black),
+                        fillColor: Color.fromRGBO(200, 200, 200, 1),
+                        filled: true,
+                        prefixIcon: Icon(Icons.person)),
                     validator: (value) {
                       if (value != null && value.isEmpty) {
                         return "O campo deve ser preenchido!";
@@ -171,6 +181,7 @@ class _RegisterFormState extends State<RegisterForm> {
                       hintStyle: TextStyle(color: Colors.black),
                       fillColor: Color.fromRGBO(200, 200, 200, 1),
                       filled: true,
+                      prefixIcon: Icon(Icons.email),
                     ),
                     validator: (value) {
                       if (value != null && value.isEmpty) {
@@ -194,14 +205,14 @@ class _RegisterFormState extends State<RegisterForm> {
                     },
                     keyboardType: TextInputType.phone,
                     decoration: const InputDecoration(
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                      border: OutlineInputBorder(),
-                      hintText: 'Número de Telefone',
-                      hintStyle: TextStyle(color: Colors.black),
-                      fillColor: Color.fromRGBO(200, 200, 200, 1),
-                      filled: true,
-                    ),
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                        border: OutlineInputBorder(),
+                        hintText: 'Número de Telefone',
+                        hintStyle: TextStyle(color: Colors.black),
+                        fillColor: Color.fromRGBO(200, 200, 200, 1),
+                        filled: true,
+                        prefixIcon: Icon(Icons.phone)),
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                       TelefoneInputFormatter(),
@@ -232,14 +243,14 @@ class _RegisterFormState extends State<RegisterForm> {
                         ],
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
-                          contentPadding:
-                              EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                          border: OutlineInputBorder(),
-                          hintText: 'Data de Nascimento',
-                          hintStyle: TextStyle(color: Colors.black),
-                          fillColor: Color.fromRGBO(200, 200, 200, 1),
-                          filled: true,
-                        ),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 8),
+                            border: OutlineInputBorder(),
+                            hintText: 'Data de Nascimento',
+                            hintStyle: TextStyle(color: Colors.black),
+                            fillColor: Color.fromRGBO(200, 200, 200, 1),
+                            filled: true,
+                            prefixIcon: Icon(Icons.calendar_month)),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             print("Tá vazio");
@@ -281,14 +292,14 @@ class _RegisterFormState extends State<RegisterForm> {
                         },
                         keyboardType: TextInputType.text,
                         decoration: const InputDecoration(
-                          contentPadding:
-                              EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                          border: OutlineInputBorder(),
-                          hintText: 'Nome da Loja',
-                          hintStyle: TextStyle(color: Colors.black),
-                          fillColor: Color.fromRGBO(200, 200, 200, 1),
-                          filled: true,
-                        ),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 8),
+                            border: OutlineInputBorder(),
+                            hintText: 'Nome da Loja',
+                            hintStyle: TextStyle(color: Colors.black),
+                            fillColor: Color.fromRGBO(200, 200, 200, 1),
+                            filled: true,
+                            prefixIcon: Icon(Icons.store)),
                         validator: (value) {
                           if (userTypeController == 1) {
                             if (value == null || value.isEmpty) {
@@ -321,12 +332,15 @@ class _RegisterFormState extends State<RegisterForm> {
                       hintStyle: const TextStyle(color: Colors.black),
                       fillColor: const Color.fromRGBO(200, 200, 200, 1),
                       filled: true,
+                      prefixIcon: Icon(Icons.lock),
                       suffixIcon: IconButton(
                         icon: Icon(
                           showPassword
                               ? Icons.visibility
                               : Icons.visibility_off,
-                          color: Colors.grey,
+                          color: showPassword
+                              ? Colors.green
+                              : Color.fromRGBO(104, 104, 104, 1),
                         ),
                         onPressed: () {
                           setState(() {
@@ -366,6 +380,7 @@ class _RegisterFormState extends State<RegisterForm> {
                       hintStyle: const TextStyle(color: Colors.black),
                       fillColor: const Color.fromRGBO(200, 200, 200, 1),
                       filled: true,
+                      prefixIcon: Icon(Icons.lock),
                       suffixIcon: IconButton(
                         icon: Icon(
                           showConfirmPassword
@@ -410,14 +425,14 @@ class _RegisterFormState extends State<RegisterForm> {
                         },
                         keyboardType: TextInputType.name,
                         decoration: const InputDecoration(
-                          contentPadding:
-                              EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                          border: OutlineInputBorder(),
-                          hintText: 'Endereço da loja',
-                          hintStyle: TextStyle(color: Colors.black),
-                          fillColor: Color.fromRGBO(200, 200, 200, 1),
-                          filled: true,
-                        ),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 8),
+                            border: OutlineInputBorder(),
+                            hintText: 'Endereço da loja',
+                            hintStyle: TextStyle(color: Colors.black),
+                            fillColor: Color.fromRGBO(200, 200, 200, 1),
+                            filled: true,
+                            prefixIcon: Icon(Icons.map)),
                         validator: (value) {
                           if (value != null && value.isEmpty) {
                             return "O campo precisa ser preenchido";
