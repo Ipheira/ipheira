@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ipheira/models/comunidade.dart';
-import 'package:ipheira/pages/lojas/lojas.dart';
+import 'package:ipheira/pages/lojas/home_lojas.dart';
+import 'package:ipheira/utils/image_url.dart';
 
 class HomeComunidades extends StatefulWidget {
   const HomeComunidades({Key? key}) : super(key: key);
@@ -23,60 +24,72 @@ class _HomeComunidadesState extends State<HomeComunidades> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Comunidades"),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            refresh();
-          },
-          child: const Icon(Icons.add),
-        ),
         body: (comunidade.isEmpty)
-            ? const Center(
-                child: Text(
-                  "Nenhuma Comunidade encontrada!\nCadastre uma comunidade primeiramente!",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18),
+            ? Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: NetworkImage(ImageUrl.background.value),
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.bottomCenter // alterado aqui
+                      ),
+                      color: Colors.white),
+                  child: const Text(
+                    "Nenhuma Comunidade encontrada!\nCadastre uma comunidade primeiramente!",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18),
+                  ),
                 ),
               )
-            : ListView(
-                children: List.generate(comunidade.length, (index) {
-                Comunidade model = comunidade[index];
-                return GestureDetector(
-                    onTap: () => {
-                    Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (newContext) => Lojas()
-                    ))},
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      width: 220,
-                      height: 90,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.other_houses_rounded, size: 80, color: Color.fromRGBO(0, 102, 51, 1)),
-                          const SizedBox(width: 10),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(model.nome_comunidade,
-                                style: const TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(width: 15,),
-                              Text(model.endereco_comunidade)
-                            ],
-                          ),
-                        ],
+            : Container(
+              decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: NetworkImage(ImageUrl.background.value),
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.bottomCenter // alterado aqui
+              ),
+              color: Colors.white),
+              child: ListView(
+                  children: List.generate(comunidade.length, (index) {
+                  Comunidade model = comunidade[index];
+                  return GestureDetector(
+                      onTap: () => {
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (newContext) => HomeLojas()
+                      ))},
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        width: 220,
+                        height: 90,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.other_houses_rounded, size: 80, color: Color.fromRGBO(0, 102, 51, 1)),
+                            const SizedBox(width: 10),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(model.nome_comunidade,
+                                  style: const TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(width: 15,),
+                                Text(model.endereco_comunidade)
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              })));
+                  );
+                })),
+            ),
+        appBar: AppBar(
+          title: const Text("Comunidades"),
+        ));
   }
 
   // ListTile(
