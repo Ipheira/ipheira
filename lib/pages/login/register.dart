@@ -1,4 +1,5 @@
 import 'package:brasil_fields/brasil_fields.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ipheira/models/usuario.dart';
@@ -7,6 +8,8 @@ import 'package:ipheira/services/auth_service.dart';
 import 'package:ipheira/services/usuario_service.dart';
 import 'package:ipheira/utils/image_url.dart';
 import 'package:uuid/uuid.dart';
+
+import '../../models/comunidade.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({Key? key}) : super(key: key);
@@ -17,6 +20,7 @@ class RegisterForm extends StatefulWidget {
 
 class _RegisterFormState extends State<RegisterForm> {
   //controllers gerais
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
@@ -30,6 +34,15 @@ class _RegisterFormState extends State<RegisterForm> {
 
   //controllers específicos de cliente
   final TextEditingController birthdayController = TextEditingController();
+
+  List<Comunidade> comunidades = [];
+  String teste = "teste";
+
+  @override
+  void initState() {
+    super.initState();
+    getComunidades();
+  }
 
   //final TextEditingController documentController = TextEditingController();
 
@@ -236,6 +249,26 @@ class _RegisterFormState extends State<RegisterForm> {
                         },
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 15),
+                      child: DropdownButton(
+                        value: "Teste 1",
+                        items: <String>['Teste 1', 'Teste 2', 'Teste 3']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            teste = (newValue!.isEmpty ? null : newValue)!;
+                          });
+                        },
+                        isExpanded: true,
+                      ),
+                    ),
                     // Nome da loja
                     Padding(
                       padding: const EdgeInsets.symmetric(
@@ -435,7 +468,8 @@ class _RegisterFormState extends State<RegisterForm> {
                         // }
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                                content: Text("Usuário cadastrado com Sucesso!")));
+                                content:
+                                    Text("Usuário cadastrado com Sucesso!")));
                         Navigator.pop(context);
                       }
                     },
@@ -465,6 +499,22 @@ class _RegisterFormState extends State<RegisterForm> {
         ),
       )),
     );
+  }
+
+  getComunidades() async {
+    List<Comunidade> temp = [];
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await firestore
+        .collection("comunidades")
+        .where("ativo", isEqualTo: true)
+        .where("excluir", isEqualTo: false)
+        .get();
+    for (var resp in querySnapshot.docs) {
+      temp.add(Comunidade.fromMap(resp.data()));
+    }
+    setState(() {
+      comunidades = temp;
+    });
+    print(temp);
   }
 
   _createStore(
