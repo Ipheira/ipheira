@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
@@ -20,6 +21,7 @@ class _HomePageState extends State<HomePage>
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController resetPasswordEmailController = TextEditingController();
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   late AnimationController _animationController;
   late Animation<double> _logoAnimation;
@@ -75,7 +77,7 @@ class _HomePageState extends State<HomePage>
               image: DecorationImage(
                 image: NetworkImage(ImageUrl.background.value),
                 fit: BoxFit.scaleDown,
-                alignment: Alignment.center,
+                alignment: Alignment.bottomCenter,
               ),
               color: Colors.white,
             ),
@@ -320,6 +322,13 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  _registrarLogAnalytics() async{
+    await FirebaseAnalytics.instance
+        .logEvent(name: "Login");
+    await FirebaseAnalytics.instance
+        .logLogin();
+  }
+
   // METODO DE AUTENTICAÇÃO FIREBASE
   _entrarUsuario({required String email, required String senha}) {
     authService.entrarUsuario(email: email, senha: senha).then((String? erro) {
@@ -329,6 +338,7 @@ class _HomePageState extends State<HomePage>
           mensagem: 'Bem vindo!',
           isErro: false,
         );
+        _registrarLogAnalytics();
         Navigator.push(
           context,
           MaterialPageRoute(
