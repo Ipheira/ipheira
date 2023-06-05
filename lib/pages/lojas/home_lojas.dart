@@ -1,16 +1,29 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:ipheira/pages/lojas/loja.dart';
-import 'package:ipheira/pages/lojista/lojista.dart';
+import 'package:ipheira/models/comunidade.dart';
+import 'package:ipheira/models/loja.dart';
+import 'package:ipheira/pages/lojas/lojas.dart';
 import 'package:ipheira/utils/image_url.dart';
 
 class HomeLojas extends StatefulWidget {
-  const HomeLojas({Key? key}) : super(key: key);
+  final Comunidade comunidade;
+
+  const HomeLojas({Key? key, required this.comunidade}) : super(key: key);
 
   @override
   State<HomeLojas> createState() => _HomeLojasState();
 }
 
 class _HomeLojasState extends State<HomeLojas> {
+  List<Loja> lojas = [];
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  @override
+  void initState() {
+    refresh();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,13 +41,14 @@ class _HomeLojasState extends State<HomeLojas> {
                   ),
               color: Colors.white),
           child: ListView(
-            children: [
-              GestureDetector(
+            children: List.generate(lojas.length, (index) {
+              Loja model = lojas[index];
+              return GestureDetector(
                 onTap: () => {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (newContext) => Loja())
+                      MaterialPageRoute(builder: (newContext) => Lojas(loja : model))
                       // MaterialPageRoute(builder: (newContext) => Lojista())
-                  )
+                      )
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -50,27 +64,55 @@ class _HomeLojasState extends State<HomeLojas> {
                         const SizedBox(width: 10),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Text(
-                              "model.loja",
-                              style: TextStyle(
+                              model.nome_loja,
+                              style: const TextStyle(
                                   fontSize: 21, fontWeight: FontWeight.bold),
                             ),
                             SizedBox(
                               width: 15,
                             ),
-                            Text("model.desc")
+                            Text(model.endereco_loja)
                           ],
                         ),
                       ],
                     ),
                   ),
                 ),
-              )
-            ],
+              );
+            }),
           ),
         ),
       ),
     );
+  }
+
+  refresh() async {
+    List<Loja> temp = [];
+    print(widget.comunidade.nome_comunidade);
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await firestore
+        .collection("loja")
+        .where("ativo", isEqualTo: true)
+        .where("excluir", isEqualTo: false)
+        .where("comunidade", isEqualTo: widget.comunidade.id)
+        .get();
+    for (var resp in querySnapshot.docs) {
+      Loja loja = Loja(
+          id: resp.id,
+          nome_loja: resp.data()['nome_loja'],
+          endereco_loja: resp.data()['endereco_loja'],
+          ativo: resp.data()['ativo'],
+          excluir: resp.data()['excluir'],
+          comunidade: resp.data()['comunidade'],
+          imagem: resp.data()['imagem'],
+          ramo: resp.data()['ramo']);
+      temp.add(loja);
+      print(loja.nome_loja);
+
+      setState(() {
+        lojas = temp;
+      });
+    }
   }
 }

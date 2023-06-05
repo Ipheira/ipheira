@@ -17,4 +17,15 @@ class ComunidadeService {
     print(temp);
     return temp;
   }
+
+  Future<Comunidade> findById(String id_comunidade) async {
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await firestore
+        .collection('loja')
+        .where('id_comunidade', isEqualTo: id_comunidade)
+        .where("ativo", isEqualTo: true)
+        .where("excluir", isEqualTo: false)
+        .get();
+    Comunidade comunidade = Comunidade.fromMap(querySnapshot.docs.first.data());
+    return comunidade;
+  }
 }

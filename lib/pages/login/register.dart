@@ -2,9 +2,11 @@ import 'package:brasil_fields/brasil_fields.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ipheira/models/loja.dart';
 import 'package:ipheira/models/usuario.dart';
 import 'package:ipheira/pages/login/component/show_snackbar.dart';
 import 'package:ipheira/services/auth_service.dart';
+import 'package:ipheira/services/loja_service.dart';
 import 'package:ipheira/services/usuario_service.dart';
 import 'package:ipheira/utils/image_url.dart';
 import 'package:uuid/uuid.dart';
@@ -36,7 +38,13 @@ class _RegisterFormState extends State<RegisterForm> {
   final TextEditingController birthdayController = TextEditingController();
 
   List<Comunidade> comunidades = [];
-  String teste = "teste";
+  Comunidade selecionada = Comunidade(
+      id: "teste",
+      nome_comunidade: "teste",
+      endereco_comunidade: "teste",
+      ativo: true,
+      excluir: true,
+      numero_de_lojas: 1);
 
   @override
   void initState() {
@@ -53,6 +61,7 @@ class _RegisterFormState extends State<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
   AuthService authService = AuthService();
   UsuarioService usuarioService = UsuarioService();
+  LojaService lojaService = LojaService();
 
   final emailRegex = RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$');
 
@@ -109,9 +118,8 @@ class _RegisterFormState extends State<RegisterForm> {
                       ),
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.only(
-                              left:
-                                  10), // Adicionado um padding para compensar o comprimento diferente do título
+                          padding: const EdgeInsets.only(left: 10),
+                          // Adicionado um padding para compensar o comprimento diferente do título
                           child: ListTile(
                             title: const Text("Lojista"),
                             minLeadingWidth: 0,
@@ -218,7 +226,7 @@ class _RegisterFormState extends State<RegisterForm> {
                       TelefoneInputFormatter(),
                     ],
                     validator: (value) {
-                      if (value != null && value.isEmpty) {
+                      if (value != null && value.isEmpty && userTypeController == 0) {
                         return 'O campo de telefone é obrigatório!';
                       }
                       return null;
@@ -252,7 +260,7 @@ class _RegisterFormState extends State<RegisterForm> {
                             filled: true,
                             prefixIcon: Icon(Icons.calendar_month)),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if ((value == null || value.isEmpty) && userTypeController == 0) {
                             print("Tá vazio");
                             return "O campo precisa ser preenchido!";
                           }
@@ -264,19 +272,20 @@ class _RegisterFormState extends State<RegisterForm> {
                       padding: const EdgeInsets.symmetric(
                           vertical: 5, horizontal: 15),
                       child: DropdownButton(
-                        value: "Teste 1",
-                        items: <String>['Teste 1', 'Teste 2', 'Teste 3']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
+                        value: selecionada,
+                        onChanged: (Comunidade? selecionado) {
+                          if (selecionado != null) {
+                            setState(() {
+                              selecionada = selecionado;
+                            });
+                          }
+                        },
+                        items: comunidades.map((comunidade) {
+                          return DropdownMenuItem<Comunidade>(
+                            child: Text(comunidade.nome_comunidade),
+                            value: comunidade,
                           );
                         }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            teste = (newValue!.isEmpty ? null : newValue)!;
-                          });
-                        },
                         isExpanded: true,
                       ),
                     ),
@@ -303,7 +312,7 @@ class _RegisterFormState extends State<RegisterForm> {
                         validator: (value) {
                           if (userTypeController == 1) {
                             if (value == null || value.isEmpty) {
-                              return "O campo precisa ser preenchido!";
+                              return null;
                             }
                           }
                           return null;
@@ -419,7 +428,7 @@ class _RegisterFormState extends State<RegisterForm> {
                           vertical: 5, horizontal: 15),
                       child: TextFormField(
                         textAlign: TextAlign.start,
-                        controller: birthdayController,
+                        controller: addressController,
                         onChanged: (text) {
                           setState(() {});
                         },
@@ -453,6 +462,15 @@ class _RegisterFormState extends State<RegisterForm> {
                       // print(birthdayController.text);
                       if (_formKey.currentState!.validate()) {
                         print("Validou");
+                        if(userTypeController == 1){
+                          _createStore(
+                            fullName: nameController.text,
+                            email: emailController.text,
+                            phone: phoneController.text,
+                            address: addressController.text,
+                            comunidade: selecionada.id
+                          );
+                        }
                         _createUser(
                             email: emailController.text,
                             senha: passwordController.text,
@@ -524,21 +542,54 @@ class _RegisterFormState extends State<RegisterForm> {
         .where("excluir", isEqualTo: false)
         .get();
     for (var resp in querySnapshot.docs) {
-      temp.add(Comunidade.fromMap(resp.data()));
+      // Comunidade comTemp = Comunidade.fromMap(resp.data());
+      // temp.add(comTemp);
+      // print(resp.id);
+      //Comunidade comTemp = Comunidade.fromMap(resp.data());
+      Comunidade com = Comunidade(
+          id: resp.id,
+          nome_comunidade: resp.data()['nome_comunidade'],
+          endereco_comunidade: resp.data()['endereco_comunidade'],
+          ativo: resp.data()['ativo'],
+          excluir: resp.data()['excluir'],
+          numero_de_lojas: resp.data()['numero_de_lojas']);
+      temp.add(com);
     }
     setState(() {
       comunidades = temp;
+      selecionada = comunidades.first;
     });
-    print(temp);
+    print(comunidades.length);
   }
 
   _createStore(
       {required String fullName,
       required String email,
       required String phone,
-      required String storeName,
-      required String address}) {
-    //TODO
+      //required String storeName,
+      required String address,
+      required String comunidade}) {
+    Loja newLoja = Loja(
+        id: const Uuid().v1(),
+        nome_loja: fullName,
+        endereco_loja: address,
+        ativo: true,
+        excluir: false,
+        comunidade: comunidade,
+        imagem: "",
+        ramo: "");
+
+    lojaService.cadastrarLoja(newLoja).then((String? erro) {
+      if (erro == null) {
+        showSnackBar(
+            context: context,
+            mensagem: "Loja Cadastrado com sucesso!",
+            isErro: false);
+      } else {
+        showSnackBar(context: context, mensagem: erro);
+      }
+    });
+
   }
 
   _registerUser(
@@ -552,7 +603,7 @@ class _RegisterFormState extends State<RegisterForm> {
       required String birthdayDate}) {
     Usuario usuario = Usuario(
         id_usuario: const Uuid().v1(),
-        id_loja: 0,
+        id_loja: selecionada.numero_de_lojas,
         tipo_usuario: typeUser,
         nome_usuario: fullName,
         data_nasc: birthdayDate,
@@ -561,9 +612,8 @@ class _RegisterFormState extends State<RegisterForm> {
         telefone_usuario: phone,
         ativo: true,
         excluir: false);
-    print("Entrei!");
+
     usuarioService.cadastrarUsuario(usuario).then((String? erro) {
-      print(erro);
       if (erro == null) {
         showSnackBar(
             context: context,
