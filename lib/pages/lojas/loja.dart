@@ -108,7 +108,7 @@ class _LojaState extends State<Loja> {
                           SizedBox(
                             width: 15,
                           ),
-                          Text("qtd: 1")
+                          Text("Preço: 1 - qtd: 1")
                         ],
                       ),
                     ],

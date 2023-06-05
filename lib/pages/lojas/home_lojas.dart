@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ipheira/pages/lojas/loja.dart';
+import 'package:ipheira/pages/lojista/lojista.dart';
 import 'package:ipheira/utils/image_url.dart';
 
 class HomeLojas extends StatefulWidget {
@@ -31,7 +32,9 @@ class _HomeLojasState extends State<HomeLojas> {
               GestureDetector(
                 onTap: () => {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (newContext) => Loja()))
+                      MaterialPageRoute(builder: (newContext) => Loja())
+                      // MaterialPageRoute(builder: (newContext) => Lojista())
+                  )
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
