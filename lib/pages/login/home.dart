@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
@@ -20,6 +21,7 @@ class _HomePageState extends State<HomePage>
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController resetPasswordEmailController = TextEditingController();
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   late AnimationController _animationController;
   late Animation<double> _logoAnimation;
@@ -75,7 +77,7 @@ class _HomePageState extends State<HomePage>
               image: DecorationImage(
                 image: NetworkImage(ImageUrl.background.value),
                 fit: BoxFit.scaleDown,
-                alignment: Alignment.center,
+                alignment: Alignment.bottomCenter,
               ),
               color: Colors.white,
             ),
@@ -105,7 +107,7 @@ class _HomePageState extends State<HomePage>
                       children: [
                         const SizedBox(height: 20),
                         RichText(
-                          text: TextSpan(
+                          text: const TextSpan(
                             text: 'Bem-vindo\n',
                             style: TextStyle(
                               color: Colors.black,
@@ -122,7 +124,7 @@ class _HomePageState extends State<HomePage>
                               TextSpan(
                                 text: 'Ipheira',
                                 style: TextStyle(
-                                  color: const Color.fromRGBO(77, 167, 104, 1),
+                                  color: Color.fromRGBO(77, 167, 104, 1),
                                   fontSize: 19,
                                 ),
                               ),
@@ -142,11 +144,11 @@ class _HomePageState extends State<HomePage>
                         setState(() {});
                       },
                       controller: emailController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'Email',
                         hintStyle: TextStyle(color: Colors.black),
-                        fillColor: const Color.fromRGBO(200, 200, 200, 1),
+                        fillColor: Color.fromRGBO(200, 200, 200, 1),
                         filled: true,
                         prefixIcon: Icon(Icons.email),
                       ),
@@ -175,12 +177,12 @@ class _HomePageState extends State<HomePage>
                       },
                       keyboardType: TextInputType.visiblePassword,
                       decoration: InputDecoration(
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
                         hintText: 'Senha',
-                        hintStyle: TextStyle(color: Colors.black),
+                        hintStyle: const TextStyle(color: Colors.black),
                         fillColor: const Color.fromRGBO(200, 200, 200, 1),
                         filled: true,
-                        prefixIcon: Icon(Icons.lock),
+                        prefixIcon: const Icon(Icons.lock),
                         suffixIcon: GestureDetector(
                           onTap: _togglePasswordVisibility,
                           child: IconButton(
@@ -191,7 +193,7 @@ class _HomePageState extends State<HomePage>
                                   : Icons.visibility_off,
                               color: _passwordVisible
                                   ? Colors.green
-                                  : Color.fromRGBO(104, 104, 104, 1),
+                                  : const Color.fromRGBO(104, 104, 104, 1),
                             ),
                           ),
                         ),
@@ -257,14 +259,14 @@ class _HomePageState extends State<HomePage>
                                   setState(() {});
                                 },
                                 controller: resetPasswordEmailController,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
-                                  contentPadding: const EdgeInsets.symmetric(
+                                  contentPadding: EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 5),
                                   hintText: 'Digite seu email',
                                   hintStyle: TextStyle(color: Colors.black),
                                   fillColor:
-                                      const Color.fromRGBO(200, 200, 200, 1),
+                                      Color.fromRGBO(200, 200, 200, 1),
                                   filled: true,
                                   prefixIcon: Icon(Icons.email),
                                 ),
@@ -320,6 +322,13 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  _registrarLogAnalytics() async{
+    await FirebaseAnalytics.instance
+        .logEvent(name: "Login");
+    await FirebaseAnalytics.instance
+        .logLogin();
+  }
+
   // METODO DE AUTENTICAÇÃO FIREBASE
   _entrarUsuario({required String email, required String senha}) {
     authService.entrarUsuario(email: email, senha: senha).then((String? erro) {
@@ -329,6 +338,7 @@ class _HomePageState extends State<HomePage>
           mensagem: 'Bem vindo!',
           isErro: false,
         );
+        _registrarLogAnalytics();
         Navigator.push(
           context,
           MaterialPageRoute(

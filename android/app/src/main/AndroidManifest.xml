@@ -5,10 +5,12 @@
             <action android:name="android.intent.action.VIEW"/>
         </intent>
     </queries>
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="ipheira"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
