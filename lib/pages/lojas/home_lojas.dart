@@ -108,7 +108,6 @@ class _HomeLojasState extends State<HomeLojas> {
           imagem: resp.data()['imagem'],
           ramo: resp.data()['ramo']);
       temp.add(loja);
-      print(loja.nome_loja);
 
       setState(() {
         lojas = temp;

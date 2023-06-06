@@ -2,7 +2,7 @@ import 'package:uuid/uuid.dart';
 
 class Usuario {
   String id_usuario;
-  int id_loja;
+  String id_loja;
   int tipo_usuario;
   String nome_usuario;
   String data_nasc;

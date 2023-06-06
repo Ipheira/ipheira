@@ -1,12 +1,14 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
-import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
 import 'package:ipheira/pages/communidades/comunidades.dart';
 import 'package:ipheira/pages/login/component/show_snackbar.dart';
 import 'package:ipheira/pages/login/register.dart';
+import 'package:ipheira/pages/lojista/lojista.dart';
+import 'package:ipheira/services/loja_service.dart';
+import 'package:ipheira/services/usuario_service.dart';
 import 'package:ipheira/utils/image_url.dart';
-import 'package:shimmer/shimmer.dart';
+
 import '../../services/auth_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,6 +24,8 @@ class _HomePageState extends State<HomePage>
   TextEditingController passwordController = TextEditingController();
   TextEditingController resetPasswordEmailController = TextEditingController();
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  UsuarioService usuarioService = UsuarioService();
+  LojaService lojaService = LojaService();
 
   late AnimationController _animationController;
   late Animation<double> _logoAnimation;
@@ -265,8 +269,7 @@ class _HomePageState extends State<HomePage>
                                       horizontal: 8, vertical: 5),
                                   hintText: 'Digite seu email',
                                   hintStyle: TextStyle(color: Colors.black),
-                                  fillColor:
-                                      Color.fromRGBO(200, 200, 200, 1),
+                                  fillColor: Color.fromRGBO(200, 200, 200, 1),
                                   filled: true,
                                   prefixIcon: Icon(Icons.email),
                                 ),
@@ -322,11 +325,9 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  _registrarLogAnalytics() async{
-    await FirebaseAnalytics.instance
-        .logEvent(name: "Login");
-    await FirebaseAnalytics.instance
-        .logLogin();
+  _registrarLogAnalytics() async {
+    await FirebaseAnalytics.instance.logEvent(name: "Login");
+    await FirebaseAnalytics.instance.logLogin();
   }
 
   // METODO DE AUTENTICAÇÃO FIREBASE
@@ -339,12 +340,30 @@ class _HomePageState extends State<HomePage>
           isErro: false,
         );
         _registrarLogAnalytics();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (newContext) => const HomeComunidades(),
-          ),
-        );
+        usuarioService.findTipoUsuario(email).then((resp) {
+          if (resp?.tipo_usuario == 0) {
+            // 0 => Cliente
+            print("logou como cliente");
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (newContext) => const HomeComunidades(),
+              ),
+            );
+          } else {
+            if (resp?.id_loja != null) {
+              lojaService.findLoja(resp!.id_loja).then((loja) {
+                print("logou como Lojista");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (newContext) => Lojista(loja : loja!),
+                  ),
+                );
+              });
+            }
+          }
+        });
       } else {
         showSnackBar(context: context, mensagem: erro);
       }

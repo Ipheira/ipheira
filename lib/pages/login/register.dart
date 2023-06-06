@@ -226,7 +226,9 @@ class _RegisterFormState extends State<RegisterForm> {
                       TelefoneInputFormatter(),
                     ],
                     validator: (value) {
-                      if (value != null && value.isEmpty && userTypeController == 0) {
+                      if (value != null &&
+                          value.isEmpty &&
+                          userTypeController == 0) {
                         return 'O campo de telefone é obrigatório!';
                       }
                       return null;
@@ -260,7 +262,8 @@ class _RegisterFormState extends State<RegisterForm> {
                             filled: true,
                             prefixIcon: Icon(Icons.calendar_month)),
                         validator: (value) {
-                          if ((value == null || value.isEmpty) && userTypeController == 0) {
+                          if ((value == null || value.isEmpty) &&
+                              userTypeController == 0) {
                             print("Tá vazio");
                             return "O campo precisa ser preenchido!";
                           }
@@ -462,14 +465,14 @@ class _RegisterFormState extends State<RegisterForm> {
                       // print(birthdayController.text);
                       if (_formKey.currentState!.validate()) {
                         print("Validou");
-                        if(userTypeController == 1){
-                          _createStore(
-                            fullName: nameController.text,
-                            email: emailController.text,
-                            phone: phoneController.text,
-                            address: addressController.text,
-                            comunidade: selecionada.id
-                          );
+                        String lojaID = "";
+                        if (userTypeController == 1) {
+                          lojaID = _createStore(
+                              fullName: nameController.text,
+                              email: emailController.text,
+                              phone: phoneController.text,
+                              address: addressController.text,
+                              comunidade: selecionada.id);
                         }
                         _createUser(
                             email: emailController.text,
@@ -483,7 +486,8 @@ class _RegisterFormState extends State<RegisterForm> {
                             storeName: storeNameController.text,
                             address: addressController.text,
                             typeUser: userTypeController,
-                            birthdayDate: birthdayController.text);
+                            birthdayDate: birthdayController.text,
+                            idLoja: lojaID);
 
                         // if (userTypeController == 0) {
                         //   _registerUser(
@@ -499,11 +503,7 @@ class _RegisterFormState extends State<RegisterForm> {
                         //       storeName: storeNameController.text,
                         //       address: addressController.text);
                         // }
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content:
-                                    Text("Usuário cadastrado com Sucesso!")));
-                        Navigator.pop(context);
+
                       }
                     },
                     child: const Text("Cadastrar")),
@@ -562,7 +562,7 @@ class _RegisterFormState extends State<RegisterForm> {
     print(comunidades.length);
   }
 
-  _createStore(
+  String _createStore(
       {required String fullName,
       required String email,
       required String phone,
@@ -585,11 +585,13 @@ class _RegisterFormState extends State<RegisterForm> {
             context: context,
             mensagem: "Loja Cadastrado com sucesso!",
             isErro: false);
+        return newLoja.id;
       } else {
         showSnackBar(context: context, mensagem: erro);
+        return erro;
       }
     });
-
+    return "";
   }
 
   _registerUser(
@@ -600,10 +602,11 @@ class _RegisterFormState extends State<RegisterForm> {
       required String storeName,
       required String address,
       required int typeUser,
-      required String birthdayDate}) {
+      required String birthdayDate,
+      required String idLoja}) {
     Usuario usuario = Usuario(
         id_usuario: const Uuid().v1(),
-        id_loja: selecionada.numero_de_lojas,
+        id_loja: idLoja,
         tipo_usuario: typeUser,
         nome_usuario: fullName,
         data_nasc: birthdayDate,
@@ -619,6 +622,12 @@ class _RegisterFormState extends State<RegisterForm> {
             context: context,
             mensagem: "Usuário Cadastrado com sucesso!",
             isErro: false);
+        print(usuario.id_loja);
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content:
+                Text("Usuário cadastrado com Sucesso!")));
+        Navigator.pop(context);
       } else {
         showSnackBar(context: context, mensagem: erro);
       }
