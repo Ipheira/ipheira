@@ -150,62 +150,123 @@ class _LojaState extends State<Lojas> {
   //   );
   // }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.loja.nome_loja),
       ),
-      body: Center(
-        child: Container(
-          height: 1000,
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: NetworkImage(ImageUrl.background.value),
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.bottomCenter // alterado aqui
-              ),
-              color: Colors.white),
-          child: ListView(
-            children: List.generate(produtos.length, (index) {
-              Produto model = produtos[index];
-              return GestureDetector(
-                onTap: () {
-                  // Ação a ser executada ao tocar em um produto
-                  print('Produto selecionado: ${model.nome_produto}');
-                },
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(ImageUrl.background.value),
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.bottomCenter,
+          ),
+          color: Colors.white,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(0.0),
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(2.0),
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    width: 220,
-                    height: 90,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.storefront_outlined,
-                            size: 80, color: Color.fromRGBO(0, 102, 51, 1)),
-                        const SizedBox(width: 10),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.loja.nome_loja,
+                            style: const TextStyle(
+                              fontSize: 21,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            widget.loja.endereco_loja,
+                          ),
+                        ],
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.message),
+                        onPressed: _launchWhatsApp,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                childAspectRatio: 1.0,
+                padding: const EdgeInsets.all(8.0),
+                mainAxisSpacing: 8.0,
+                crossAxisSpacing: 8.0,
+                children: produtos.map((Produto model) {
+                  return GestureDetector(
+                    onTap: () {
+                      // Ação a ser executada ao tocar em um produto
+                      print('Produto selecionado: ${model.nome_produto}');
+                    },
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Container(
+                              alignment:
+                                  Alignment.center, // Centralizar o ícone
+                              child: Icon(
+                                Icons.storefront_outlined,
+                                size: 80,
+                                color: Color.fromRGBO(0, 102, 51, 1),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
                             Text(
                               model.nome_produto,
                               style: const TextStyle(
-                                  fontSize: 21, fontWeight: FontWeight.bold),
+                                fontSize: 21,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            SizedBox(
-                              width: 15,
+                            const SizedBox(height: 8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Quantidade: ${model.quantidade.toString()}",
+                                ),
+                                Text(
+                                  "Preço: ${model.preco.toString()}",
+                                ),
+                              ],
                             ),
-                            Text("Quantidade: "+model.quantidade.toString() + " - Preço: "+ model.preco.toString())
                           ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              );
-            }),
-          ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -219,20 +280,20 @@ class _LojaState extends State<Lojas> {
         .where("excluir", isEqualTo: false)
         .where("loja", isEqualTo: widget.loja.id)
         .get();
-    //print(widget.loja.id);
-    //print(querySnapshot.docs.length);
+
     for (var resp in querySnapshot.docs) {
       Produto produto = Produto(
-          id: resp.id,
-          nome_produto: resp.data()['nome_produto'],
-          preco: double.parse(resp.data()['preco'].toString()),
-          quantidade: double.parse(resp.data()['quantidade'].toString()),
-          loja: resp.data()['loja'],
-          excluir: resp.data()['excluir'],
-          ativo: resp.data()['ativo']);
+        id: resp.id,
+        nome_produto: resp.data()['nome_produto'],
+        preco: double.parse(resp.data()['preco'].toString()),
+        quantidade: double.parse(resp.data()['quantidade'].toString()),
+        loja: resp.data()['loja'],
+        excluir: resp.data()['excluir'],
+        ativo: resp.data()['ativo'],
+      );
       temp.add(produto);
-      //print(produto.nome_produto);
     }
+
     setState(() {
       produtos = temp;
     });
