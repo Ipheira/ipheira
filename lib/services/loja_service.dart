@@ -27,6 +27,7 @@ class LojaService {
     Loja loja = Loja(
         id: documentSnapshot.id,
         nome_loja: documentSnapshot.data()!["nome_loja"],
+        nome_lojista: documentSnapshot.data()!["nome_lojista"],
         endereco_loja: documentSnapshot.data()!['endereco_loja'],
         ativo: documentSnapshot.data()!["ativo"],
         excluir: documentSnapshot.data()!['excluir'],

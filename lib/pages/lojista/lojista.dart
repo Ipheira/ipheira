@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ipheira/models/loja.dart';
+import 'package:ipheira/services/produto_service.dart';
 import 'package:ipheira/utils/image_url.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../models/produto.dart';
+import '../login/component/show_snackbar.dart';
 
 class Lojista extends StatefulWidget {
   final Loja loja;
@@ -17,6 +20,11 @@ class Lojista extends StatefulWidget {
 class _LojistaState extends State<Lojista> {
   List<Produto> produtos = [];
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  ProdutoService produtoService = ProdutoService();
+
+  final TextEditingController nomeProduto = TextEditingController();
+  final TextEditingController quantidade = TextEditingController();
+  final TextEditingController preco = TextEditingController();
 
   @override
   void initState() {
@@ -39,7 +47,7 @@ class _LojistaState extends State<Lojista> {
                 title: const Text('Adicionar Produto'),
                 content: SizedBox(
                   width: double.maxFinite,
-                  height: 180,
+                  height: 230,
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
@@ -48,6 +56,7 @@ class _LojistaState extends State<Lojista> {
                           onChanged: (text) {
                             setState(() {});
                           },
+                          controller: nomeProduto,
                           // controller: resetPasswordEmailController,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
@@ -62,12 +71,7 @@ class _LojistaState extends State<Lojista> {
                           // Validação do campo email
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'O valor de email deve ser preenchido';
-                            }
-                            if (!value.contains('@') ||
-                                !value.contains('.') ||
-                                value.length < 4) {
-                              return 'O email deve ser válido';
+                              return 'O valor de nome deve ser preenchido';
                             }
                             return null;
                           },
@@ -80,7 +84,7 @@ class _LojistaState extends State<Lojista> {
                           onChanged: (text) {
                             setState(() {});
                           },
-                          // controller: resetPasswordEmailController,
+                          controller: quantidade,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(
@@ -93,13 +97,41 @@ class _LojistaState extends State<Lojista> {
                           ),
                           // Validação do campo email
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'O valor de email deve ser preenchido';
+                            if (value!.isEmpty) {
+                              return 'Campo obrigatório';
                             }
-                            if (!value.contains('@') ||
-                                !value.contains('.') ||
-                                value.length < 4) {
-                              return 'O email deve ser válido';
+                            if (double.tryParse(value) == null) {
+                              return 'Digite um número válido';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        TextFormField(
+                          textAlign: TextAlign.start,
+                          onChanged: (text) {
+                            setState(() {});
+                          },
+                          controller: preco,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 5),
+                            hintText: 'Preço',
+                            hintStyle: TextStyle(color: Colors.black),
+                            fillColor: Color.fromRGBO(200, 200, 200, 1),
+                            filled: true,
+                            prefixIcon: Icon(Icons.email),
+                          ),
+                          // Validação do campo email
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Campo obrigatório';
+                            }
+                            if (double.tryParse(value) == null) {
+                              return 'Digite um número válido';
                             }
                             return null;
                           },
@@ -134,12 +166,17 @@ class _LojistaState extends State<Lojista> {
                 actions: <Widget>[
                   TextButton(
                     onPressed: () {
+                      _createProduto(name: nomeProduto.text, preco: preco.text, quantidade: quantidade.text);
+                      refresh();
+                      limparController();
                       Navigator.of(context).pop();
                     },
                     child: const Text('Enviar'),
                   ),
                   TextButton(
                     onPressed: () {
+                      refresh();
+                      limparController();
                       Navigator.of(context).pop();
                     },
                     child: const Text(
@@ -219,9 +256,9 @@ class _LojistaState extends State<Lojista> {
                                             decoration: const InputDecoration(
                                               border: OutlineInputBorder(),
                                               contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 5),
+                                              EdgeInsets.symmetric(
+                                                  horizontal: 8,
+                                                  vertical: 5),
                                               hintText: 'Nome',
                                               hintStyle: TextStyle(
                                                   color: Colors.black),
@@ -257,9 +294,9 @@ class _LojistaState extends State<Lojista> {
                                             decoration: const InputDecoration(
                                               border: OutlineInputBorder(),
                                               contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 5),
+                                              EdgeInsets.symmetric(
+                                                  horizontal: 8,
+                                                  vertical: 5),
                                               hintText: 'Quantidade',
                                               hintStyle: TextStyle(
                                                   color: Colors.black),
@@ -338,7 +375,7 @@ class _LojistaState extends State<Lojista> {
                           children: [
                             Container(
                               alignment:
-                                  Alignment.center, // Centralizar o ícone
+                              Alignment.center, // Centralizar o ícone
                               child: const Icon(
                                 Icons.panorama_rounded,
                                 size: 80,
@@ -360,7 +397,8 @@ class _LojistaState extends State<Lojista> {
                                 Row(
                                   children: [
                                     Text(
-                                      "Quantidade: ${model.quantidade.toString()}",
+                                      "Quantidade: ${model.quantidade
+                                          .toString()}",
                                     ),
                                     IconButton(
                                         onPressed: () {
@@ -377,32 +415,32 @@ class _LojistaState extends State<Lojista> {
                                                       children: [
                                                         TextFormField(
                                                           textAlign:
-                                                              TextAlign.start,
+                                                          TextAlign.start,
                                                           onChanged: (text) {
                                                             setState(() {});
                                                           },
                                                           // controller: resetPasswordEmailController,
                                                           decoration:
-                                                              const InputDecoration(
+                                                          const InputDecoration(
                                                             border:
-                                                                OutlineInputBorder(),
+                                                            OutlineInputBorder(),
                                                             contentPadding:
-                                                                EdgeInsets
-                                                                    .symmetric(
-                                                                        horizontal:
-                                                                            8,
-                                                                        vertical:
-                                                                            5),
+                                                            EdgeInsets
+                                                                .symmetric(
+                                                                horizontal:
+                                                                8,
+                                                                vertical:
+                                                                5),
                                                             hintText: 'Nome',
                                                             hintStyle: TextStyle(
                                                                 color: Colors
                                                                     .black),
                                                             fillColor:
-                                                                Color.fromRGBO(
-                                                                    200,
-                                                                    200,
-                                                                    200,
-                                                                    1),
+                                                            Color.fromRGBO(
+                                                                200,
+                                                                200,
+                                                                200,
+                                                                1),
                                                             filled: true,
                                                             prefixIcon: Icon(
                                                                 Icons.email),
@@ -413,7 +451,8 @@ class _LojistaState extends State<Lojista> {
                                                                 value.isEmpty) {
                                                               return 'O valor de email deve ser preenchido';
                                                             }
-                                                            if (!value.contains('@') ||
+                                                            if (!value.contains(
+                                                                '@') ||
                                                                 !value.contains(
                                                                     '.') ||
                                                                 value.length <
@@ -428,36 +467,36 @@ class _LojistaState extends State<Lojista> {
                                                         ),
                                                         TextFormField(
                                                           textAlign:
-                                                              TextAlign.start,
+                                                          TextAlign.start,
                                                           keyboardType:
-                                                              TextInputType
-                                                                  .number,
+                                                          TextInputType
+                                                              .number,
                                                           onChanged: (text) {
                                                             setState(() {});
                                                           },
                                                           // controller: resetPasswordEmailController,
                                                           decoration:
-                                                              const InputDecoration(
+                                                          const InputDecoration(
                                                             border:
-                                                                OutlineInputBorder(),
+                                                            OutlineInputBorder(),
                                                             contentPadding:
-                                                                EdgeInsets
-                                                                    .symmetric(
-                                                                        horizontal:
-                                                                            8,
-                                                                        vertical:
-                                                                            5),
+                                                            EdgeInsets
+                                                                .symmetric(
+                                                                horizontal:
+                                                                8,
+                                                                vertical:
+                                                                5),
                                                             hintText:
-                                                                'Quantidade',
+                                                            'Quantidade',
                                                             hintStyle: TextStyle(
                                                                 color: Colors
                                                                     .black),
                                                             fillColor:
-                                                                Color.fromRGBO(
-                                                                    200,
-                                                                    200,
-                                                                    200,
-                                                                    1),
+                                                            Color.fromRGBO(
+                                                                200,
+                                                                200,
+                                                                200,
+                                                                1),
                                                             filled: true,
                                                             prefixIcon: Icon(
                                                                 Icons.email),
@@ -468,7 +507,8 @@ class _LojistaState extends State<Lojista> {
                                                                 value.isEmpty) {
                                                               return 'O valor de email deve ser preenchido';
                                                             }
-                                                            if (!value.contains('@') ||
+                                                            if (!value.contains(
+                                                                '@') ||
                                                                 !value.contains(
                                                                     '.') ||
                                                                 value.length <
@@ -528,6 +568,42 @@ class _LojistaState extends State<Lojista> {
       ),
     );
   }
+  void limparController() {
+    nomeProduto.clear();
+    preco.clear();
+    quantidade.clear();
+  }
+  String _createProduto({required String name,
+    required String preco,
+    required String quantidade}) {
+    String produtoId = const Uuid().v1();
+
+    print("antes do registro no firebase: " + produtoId);
+
+    Produto newProduto = Produto(id: produtoId,
+        nome_produto: name,
+        preco: double.parse(preco),
+        quantidade: double.parse(preco),
+        loja: widget.loja.id,
+        excluir: false,
+        ativo: true);
+
+    produtoService.cadastrarProduto(newProduto).then((String? erro) {
+      if (erro == null) {
+        showSnackBar(
+            context: context,
+            mensagem: "Loja Cadastrado com sucesso!",
+            isErro: false);
+        return newProduto.id;
+      } else {
+        showSnackBar(context: context, mensagem: erro);
+        return erro;
+      }
+    });
+
+    print('Antes do retorno: ${newProduto.id.toString()}');
+    return newProduto.id.toString();
+  }
 
   refresh() async {
     List<Produto> temp = [];
@@ -547,7 +623,7 @@ class _LojistaState extends State<Lojista> {
 
       dynamic quantidadeValue = resp.data()['quantidade'];
       double quantidade =
-          quantidadeValue is int ? quantidadeValue.toDouble() : quantidadeValue;
+      quantidadeValue is int ? quantidadeValue.toDouble() : quantidadeValue;
 
       Produto produto = Produto(
           id: resp.id,

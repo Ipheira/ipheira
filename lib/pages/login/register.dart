@@ -292,7 +292,15 @@ class _RegisterFormState extends State<RegisterForm> {
                         isExpanded: true,
                       ),
                     ),
-                    // Nome da loja
+                  ],
+                ),
+                IndexedStack(
+                  index: userTypeController,
+                  children: <Widget>[
+                    Container(
+                      width: 0,
+                      height: 0,
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 5, horizontal: 15),
@@ -470,6 +478,7 @@ class _RegisterFormState extends State<RegisterForm> {
                           lojaID = _createStore(
                               fullName: nameController.text,
                               email: emailController.text,
+                              storeName:  storeNameController.text,
                               phone: phoneController.text,
                               address: addressController.text,
                               comunidade: selecionada.id);
@@ -567,14 +576,14 @@ class _RegisterFormState extends State<RegisterForm> {
       {required String fullName,
       required String email,
       required String phone,
-      //required String storeName,
+      required String storeName,
       required String address,
       required String comunidade}) {
 
     int index = fullName.indexOf(' ');
 
-    String storeName = index == -1 ?
-    'Loja ${fullName}' : 'Loja ${fullName.substring(0, index)}';
+    // String storeName = index == -1 ?
+    // 'Loja ${fullName}' : 'Loja ${fullName.substring(0, index)}';
 
     String idLoja = const Uuid().v1();
 
@@ -583,6 +592,7 @@ class _RegisterFormState extends State<RegisterForm> {
     Loja newLoja = Loja(
         id: idLoja,
         nome_loja: storeName,
+        nome_lojista: fullName,
         endereco_loja: address,
         ativo: true,
         excluir: false,
