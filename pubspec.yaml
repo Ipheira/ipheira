@@ -16,7 +16,7 @@ dependencies:
   firebase_core: ^2.10.0
   cloud_firestore: ^4.5.3
   firebase_auth: ^4.6.1
-  brasil_fields: ^1.13.1
+  brasil_fields: ^1.9.1
   uuid: ^3.0.6
   animated_text_kit: ^4.2.2
   animated_size_and_fade: ^3.0.1

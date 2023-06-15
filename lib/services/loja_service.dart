@@ -33,6 +33,8 @@ class LojaService {
         comunidade: documentSnapshot.data()!['comunidade'],
         imagem: documentSnapshot.data()!['imagem'],
         ramo: documentSnapshot.data()!['ramo']);
+
+    print(loja);
     return loja;
   }
 

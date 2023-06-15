@@ -446,7 +446,7 @@ class _RegisterFormState extends State<RegisterForm> {
                             filled: true,
                             prefixIcon: Icon(Icons.map)),
                         validator: (value) {
-                          if (value != null && value.isEmpty) {
+                          if ( (userTypeController == 1) && (value != null && value.isEmpty)) {
                             return "O campo precisa ser preenchido";
                           }
                           return null;
@@ -474,6 +474,7 @@ class _RegisterFormState extends State<RegisterForm> {
                               address: addressController.text,
                               comunidade: selecionada.id);
                         }
+                        print("após o return: "+lojaID);
                         _createUser(
                             email: emailController.text,
                             senha: passwordController.text,
@@ -569,9 +570,19 @@ class _RegisterFormState extends State<RegisterForm> {
       //required String storeName,
       required String address,
       required String comunidade}) {
+
+    int index = fullName.indexOf(' ');
+
+    String storeName = index == -1 ?
+    'Loja ${fullName}' : 'Loja ${fullName.substring(0, index)}';
+
+    String idLoja = const Uuid().v1();
+
+    print("antes do registro no firebase: " + idLoja);
+
     Loja newLoja = Loja(
-        id: const Uuid().v1(),
-        nome_loja: fullName,
+        id: idLoja,
+        nome_loja: storeName,
         endereco_loja: address,
         ativo: true,
         excluir: false,
@@ -591,7 +602,8 @@ class _RegisterFormState extends State<RegisterForm> {
         return erro;
       }
     });
-    return "";
+    print("antes do return: "+idLoja);
+    return idLoja;
   }
 
   _registerUser(

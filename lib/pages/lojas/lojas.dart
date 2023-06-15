@@ -40,117 +40,6 @@ class _LojaState extends State<Lojas> {
   }
 
   @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       title: const Text("Loja"),
-  //     ),
-  //     body: Center(
-  //       child: Container(
-  //         height: 1000,
-  //         decoration: BoxDecoration(
-  //             image: DecorationImage(
-  //                 image: NetworkImage(ImageUrl.background.value),
-  //                 fit: BoxFit.scaleDown,
-  //                 alignment: Alignment.bottomCenter // alterado aqui
-  //                 ),
-  //             color: Colors.white),
-  //         child: ListView(
-  //           children: [
-  //             Padding(
-  //               padding: const EdgeInsets.only(bottom: 10.0),
-  //               child: Container(
-  //                 height: 120,
-  //                 color: Color.fromRGBO(153, 232, 157, 1),
-  //                 child: Padding(
-  //                   padding: const EdgeInsets.symmetric(horizontal: 13.0),
-  //                   child: Row(
-  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                     children: [
-  //                       Column(
-  //                         mainAxisAlignment: MainAxisAlignment.center,
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         children: [
-  //                           Text(
-  //                             widget.loja.nome_loja,
-  //                             style: const TextStyle(
-  //                                 fontSize: 21, fontWeight: FontWeight.bold),
-  //                           ),
-  //                           const SizedBox(
-  //                             width: 15,
-  //                           ),
-  //                           Text(""),
-  //                           SizedBox(
-  //                             width: 15,
-  //                           ),
-  //                           Text(widget.loja.endereco_loja)
-  //                         ],
-  //                       ),
-  //                       IconButton(
-  //                         icon: Icon(Icons.message),
-  //                         onPressed: _launchWhatsApp,
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //             Padding(
-  //               padding: const EdgeInsets.all(8.0),
-  //               child: Container(
-  //                 width: 220,
-  //                 height: 90,
-  //                 child: ListView(
-  //                   children: List.generate(produtos.length, (index) {
-  //                     Produto model = produtos[index];
-  //                     return GestureDetector(
-  //                       onTap: () {
-  //                         // Ação a ser executada ao tocar em um produto
-  //                         print('Produto selecionado: ${model.nome_produto}');
-  //                       },
-  //                       child: Padding(
-  //                         padding: const EdgeInsets.all(8.0),
-  //                         child: Container(
-  //                           width: 220,
-  //                           height: 90,
-  //                           child: Row(
-  //                             mainAxisAlignment: MainAxisAlignment.center,
-  //                             crossAxisAlignment: CrossAxisAlignment.center,
-  //                             children: [
-  //                               const Icon(Icons.storefront_outlined,
-  //                                   size: 80, color: Color.fromRGBO(0, 102, 51, 1)),
-  //                               const SizedBox(width: 10),
-  //                               Column(
-  //                                 mainAxisAlignment: MainAxisAlignment.center,
-  //                                 children: [
-  //                                   Text(
-  //                                     model.nome_produto,
-  //                                     style: const TextStyle(
-  //                                         fontSize: 21, fontWeight: FontWeight.bold),
-  //                                   ),
-  //                                   SizedBox(
-  //                                     width: 15,
-  //                                   ),
-  //                                   Text("Quantidade: "+model.quantidade.toString() + " - Preço: "+ model.preco.toString())
-  //                                 ],
-  //                               ),
-  //                             ],
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     );
-  //                   }),
-  //                 ),
-  //               ),
-  //             )
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -206,7 +95,7 @@ class _LojaState extends State<Lojas> {
                 ),
               ),
             ),
-            Expanded(
+            Flexible(
               child: GridView.count(
                 crossAxisCount: 2,
                 childAspectRatio: 1.0,
@@ -232,8 +121,8 @@ class _LojaState extends State<Lojas> {
                             Container(
                               alignment:
                                   Alignment.center, // Centralizar o ícone
-                              child: Icon(
-                                Icons.storefront_outlined,
+                              child: const Icon(
+                                Icons.panorama_rounded,
                                 size: 80,
                                 color: Color.fromRGBO(0, 102, 51, 1),
                               ),

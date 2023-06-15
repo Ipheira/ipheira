@@ -341,8 +341,10 @@ class _HomePageState extends State<HomePage>
         );
         _registrarLogAnalytics();
         usuarioService.findTipoUsuario(email).then((resp) {
+          print(resp?.toMap());
           if (resp?.tipo_usuario == 0) {
             // 0 => Cliente
+            print(resp?.tipo_usuario);
             print("logou como cliente");
             Navigator.push(
               context,
@@ -350,7 +352,8 @@ class _HomePageState extends State<HomePage>
                 builder: (newContext) => const HomeComunidades(),
               ),
             );
-          } else {
+          }
+          if(resp?.tipo_usuario == 1){
             if (resp?.id_loja != null) {
               lojaService.findLoja(resp!.id_loja).then((loja) {
                 print("logou como Lojista");

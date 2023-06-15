@@ -19,10 +19,16 @@ class _LojistaState extends State<Lojista> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   @override
+  void initState() {
+    refresh();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Lojista"),
+        title: const Text('Sua Loja'),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -151,321 +157,373 @@ class _LojistaState extends State<Lojista> {
           color: Colors.white,
         ),
       ),
-      body: Center(
-        child: Container(
-          height: 1000,
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: NetworkImage(ImageUrl.background.value),
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.bottomCenter // alterado aqui
-                  ),
-              color: Colors.white),
-          child: ListView(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10.0),
-                child: Container(
-                  height: 120,
-                  color: const Color.fromRGBO(153, 232, 157, 1),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 13.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.loja.nome_loja,
-                              style: const TextStyle(
-                                  fontSize: 21, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            const Text("Nome do proprietário"),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                             Text(widget.loja.endereco_loja)
-                          ],
-                        ),
-                        IconButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text('Atualizar Loja'),
-                                    content: SizedBox(
-                                      width: double.maxFinite,
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          children: [
-                                            TextFormField(
-                                              textAlign: TextAlign.start,
-                                              onChanged: (text) {
-                                                setState(() {});
-                                              },
-                                              // controller: resetPasswordEmailController,
-                                              decoration: const InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 5),
-                                                hintText: 'Descrição',
-                                                hintStyle: TextStyle(
-                                                    color: Colors.black),
-                                                fillColor: Color.fromRGBO(
-                                                    200, 200, 200, 1),
-                                                filled: true,
-                                                prefixIcon: Icon(Icons.email),
-                                              ),
-                                              // Validação do campo email
-                                              validator: (value) {
-                                                if (value == null ||
-                                                    value.isEmpty) {
-                                                  return 'O valor de email deve ser preenchido';
-                                                }
-                                                if (!value.contains('@') ||
-                                                    !value.contains('.') ||
-                                                    value.length < 4) {
-                                                  return 'O email deve ser válido';
-                                                }
-                                                return null;
-                                              },
-                                            ),
-                                            const SizedBox(
-                                              height: 8,
-                                            ),
-                                            TextFormField(
-                                              textAlign: TextAlign.start,
-                                              onChanged: (text) {
-                                                setState(() {});
-                                              },
-                                              // controller: resetPasswordEmailController,
-                                              decoration: const InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 5),
-                                                hintText: 'Telefone',
-                                                hintStyle: TextStyle(
-                                                    color: Colors.black),
-                                                fillColor: Color.fromRGBO(
-                                                    200, 200, 200, 1),
-                                                filled: true,
-                                                prefixIcon: Icon(Icons.email),
-                                              ),
-                                              // Validação do campo email
-                                              validator: (value) {
-                                                if (value == null ||
-                                                    value.isEmpty) {
-                                                  return 'O valor de email deve ser preenchido';
-                                                }
-                                                if (!value.contains('@') ||
-                                                    !value.contains('.') ||
-                                                    value.length < 4) {
-                                                  return 'O email deve ser válido';
-                                                }
-                                                return null;
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Enviar'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text(
-                                          'Cancelar',
-                                          style: TextStyle(color: Colors.red),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.mode_edit_outline_outlined))
-                      ],
-                    ),
-                  ),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(ImageUrl.background.value),
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.bottomCenter,
+          ),
+          color: Colors.white,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(0.0),
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(2.0),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  width: 220,
-                  height: 90,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(Icons.storefront_outlined,
-                          size: 80, color: Color.fromRGBO(0, 102, 51, 1)),
-                      const SizedBox(width: 10),
                       Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              const Text(
-                                "model.produto",
-                                style: TextStyle(
-                                    fontSize: 21, fontWeight: FontWeight.bold),
-                              ),
-                              IconButton(
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title:
-                                              const Text('Atualizar Produto'),
-                                          content: SizedBox(
-                                            width: double.maxFinite,
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                children: [
-                                                  TextFormField(
-                                                    textAlign: TextAlign.start,
-                                                    onChanged: (text) {
-                                                      setState(() {});
-                                                    },
-                                                    // controller: resetPasswordEmailController,
-                                                    decoration:
-                                                        const InputDecoration(
-                                                      border:
-                                                          OutlineInputBorder(),
-                                                      contentPadding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 8,
-                                                              vertical: 5),
-                                                      hintText: 'Nome',
-                                                      hintStyle: TextStyle(
-                                                          color: Colors.black),
-                                                      fillColor: Color.fromRGBO(
-                                                          200, 200, 200, 1),
-                                                      filled: true,
-                                                      prefixIcon:
-                                                          Icon(Icons.email),
-                                                    ),
-                                                    // Validação do campo email
-                                                    validator: (value) {
-                                                      if (value == null ||
-                                                          value.isEmpty) {
-                                                        return 'O valor de email deve ser preenchido';
-                                                      }
-                                                      if (!value
-                                                              .contains('@') ||
-                                                          !value
-                                                              .contains('.') ||
-                                                          value.length < 4) {
-                                                        return 'O email deve ser válido';
-                                                      }
-                                                      return null;
-                                                    },
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 8,
-                                                  ),
-                                                  TextFormField(
-                                                    textAlign: TextAlign.start,
-                                                    keyboardType:
-                                                        TextInputType.number,
-                                                    onChanged: (text) {
-                                                      setState(() {});
-                                                    },
-                                                    // controller: resetPasswordEmailController,
-                                                    decoration:
-                                                        const InputDecoration(
-                                                      border:
-                                                          OutlineInputBorder(),
-                                                      contentPadding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 8,
-                                                              vertical: 5),
-                                                      hintText: 'Quantidade',
-                                                      hintStyle: TextStyle(
-                                                          color: Colors.black),
-                                                      fillColor: Color.fromRGBO(
-                                                          200, 200, 200, 1),
-                                                      filled: true,
-                                                      prefixIcon:
-                                                          Icon(Icons.email),
-                                                    ),
-                                                    // Validação do campo email
-                                                    validator: (value) {
-                                                      if (value == null ||
-                                                          value.isEmpty) {
-                                                        return 'O valor de email deve ser preenchido';
-                                                      }
-                                                      if (!value
-                                                              .contains('@') ||
-                                                          !value
-                                                              .contains('.') ||
-                                                          value.length < 4) {
-                                                        return 'O email deve ser válido';
-                                                      }
-                                                      return null;
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text('Enviar'),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text(
-                                                'Cancelar',
-                                                style: TextStyle(
-                                                    color: Colors.red),
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  icon: const Icon(
-                                      Icons.mode_edit_outline_outlined))
-                            ],
+                          Text(
+                            widget.loja.nome_loja,
+                            style: const TextStyle(
+                              fontSize: 21,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          SizedBox(
-                            width: 5,
+                          const SizedBox(height: 8),
+                          Text(
+                            widget.loja.endereco_loja,
                           ),
-                          Text("Preço: 1 / qtd: 1"),
                         ],
                       ),
+                      IconButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Atualizar Produto'),
+                                  content: SizedBox(
+                                    width: double.maxFinite,
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          TextFormField(
+                                            textAlign: TextAlign.start,
+                                            onChanged: (text) {
+                                              setState(() {});
+                                            },
+                                            // controller: resetPasswordEmailController,
+                                            decoration: const InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 5),
+                                              hintText: 'Nome',
+                                              hintStyle: TextStyle(
+                                                  color: Colors.black),
+                                              fillColor: Color.fromRGBO(
+                                                  200, 200, 200, 1),
+                                              filled: true,
+                                              prefixIcon: Icon(Icons.email),
+                                            ),
+                                            // Validação do campo email
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return 'O valor de email deve ser preenchido';
+                                              }
+                                              if (!value.contains('@') ||
+                                                  !value.contains('.') ||
+                                                  value.length < 4) {
+                                                return 'O email deve ser válido';
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          TextFormField(
+                                            textAlign: TextAlign.start,
+                                            keyboardType: TextInputType.number,
+                                            onChanged: (text) {
+                                              setState(() {});
+                                            },
+                                            // controller: resetPasswordEmailController,
+                                            decoration: const InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 5),
+                                              hintText: 'Quantidade',
+                                              hintStyle: TextStyle(
+                                                  color: Colors.black),
+                                              fillColor: Color.fromRGBO(
+                                                  200, 200, 200, 1),
+                                              filled: true,
+                                              prefixIcon: Icon(Icons.email),
+                                            ),
+                                            // Validação do campo email
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return 'O valor de email deve ser preenchido';
+                                              }
+                                              if (!value.contains('@') ||
+                                                  !value.contains('.') ||
+                                                  value.length < 4) {
+                                                return 'O email deve ser válido';
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Enviar'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text(
+                                        'Cancelar',
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          icon: const Icon(Icons.mode_edit_outline_outlined)),
                     ],
                   ),
                 ),
-              )
-            ],
-          ),
+              ),
+            ),
+            Flexible(
+              child: GridView.count(
+                crossAxisCount: 2,
+                childAspectRatio: 1.0,
+                padding: const EdgeInsets.all(8.0),
+                mainAxisSpacing: 8.0,
+                crossAxisSpacing: 8.0,
+                children: produtos.map((Produto model) {
+                  return GestureDetector(
+                    onTap: () {
+                      // Ação a ser executada ao tocar em um produto
+                      print('Produto selecionado: ${model.nome_produto}');
+                    },
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 5.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              alignment:
+                                  Alignment.center, // Centralizar o ícone
+                              child: const Icon(
+                                Icons.panorama_rounded,
+                                size: 80,
+                                color: Color.fromRGBO(0, 102, 51, 1),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              model.nome_produto,
+                              style: const TextStyle(
+                                fontSize: 21,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Quantidade: ${model.quantidade.toString()}",
+                                    ),
+                                    IconButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: const Text(
+                                                    'Atualizar Produto'),
+                                                content: SizedBox(
+                                                  width: double.maxFinite,
+                                                  child: SingleChildScrollView(
+                                                    child: Column(
+                                                      children: [
+                                                        TextFormField(
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                          onChanged: (text) {
+                                                            setState(() {});
+                                                          },
+                                                          // controller: resetPasswordEmailController,
+                                                          decoration:
+                                                              const InputDecoration(
+                                                            border:
+                                                                OutlineInputBorder(),
+                                                            contentPadding:
+                                                                EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal:
+                                                                            8,
+                                                                        vertical:
+                                                                            5),
+                                                            hintText: 'Nome',
+                                                            hintStyle: TextStyle(
+                                                                color: Colors
+                                                                    .black),
+                                                            fillColor:
+                                                                Color.fromRGBO(
+                                                                    200,
+                                                                    200,
+                                                                    200,
+                                                                    1),
+                                                            filled: true,
+                                                            prefixIcon: Icon(
+                                                                Icons.email),
+                                                          ),
+                                                          // Validação do campo email
+                                                          validator: (value) {
+                                                            if (value == null ||
+                                                                value.isEmpty) {
+                                                              return 'O valor de email deve ser preenchido';
+                                                            }
+                                                            if (!value.contains('@') ||
+                                                                !value.contains(
+                                                                    '.') ||
+                                                                value.length <
+                                                                    4) {
+                                                              return 'O email deve ser válido';
+                                                            }
+                                                            return null;
+                                                          },
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 8,
+                                                        ),
+                                                        TextFormField(
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .number,
+                                                          onChanged: (text) {
+                                                            setState(() {});
+                                                          },
+                                                          // controller: resetPasswordEmailController,
+                                                          decoration:
+                                                              const InputDecoration(
+                                                            border:
+                                                                OutlineInputBorder(),
+                                                            contentPadding:
+                                                                EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal:
+                                                                            8,
+                                                                        vertical:
+                                                                            5),
+                                                            hintText:
+                                                                'Quantidade',
+                                                            hintStyle: TextStyle(
+                                                                color: Colors
+                                                                    .black),
+                                                            fillColor:
+                                                                Color.fromRGBO(
+                                                                    200,
+                                                                    200,
+                                                                    200,
+                                                                    1),
+                                                            filled: true,
+                                                            prefixIcon: Icon(
+                                                                Icons.email),
+                                                          ),
+                                                          // Validação do campo email
+                                                          validator: (value) {
+                                                            if (value == null ||
+                                                                value.isEmpty) {
+                                                              return 'O valor de email deve ser preenchido';
+                                                            }
+                                                            if (!value.contains('@') ||
+                                                                !value.contains(
+                                                                    '.') ||
+                                                                value.length <
+                                                                    4) {
+                                                              return 'O email deve ser válido';
+                                                            }
+                                                            return null;
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: const Text('Enviar'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: const Text(
+                                                      'Cancelar',
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                        icon: const Icon(
+                                            Icons.mode_edit_outline_outlined))
+                                  ],
+                                ),
+                                Text(
+                                  "Preço: ${model.preco.toString()}",
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -473,27 +531,37 @@ class _LojistaState extends State<Lojista> {
 
   refresh() async {
     List<Produto> temp = [];
+
     print(widget.loja.nome_loja);
+
     QuerySnapshot<Map<String, dynamic>> querySnapshot = await firestore
         .collection("produtos")
         .where("ativo", isEqualTo: true)
         .where("excluir", isEqualTo: false)
         .where("loja", isEqualTo: widget.loja.id)
         .get();
+
     for (var resp in querySnapshot.docs) {
+      dynamic precoValue = resp.data()['preco'];
+      double preco = precoValue is int ? precoValue.toDouble() : precoValue;
+
+      dynamic quantidadeValue = resp.data()['quantidade'];
+      double quantidade =
+          quantidadeValue is int ? quantidadeValue.toDouble() : quantidadeValue;
+
       Produto produto = Produto(
           id: resp.id,
           nome_produto: resp.data()['nome_produto'],
-          preco: resp.data()['preco'],
-          quantidade: resp.data()['quantidade'],
+          preco: preco,
+          quantidade: quantidade,
           loja: resp.data()['loja'],
           excluir: resp.data()['excluir'],
           ativo: resp.data()['ativo']);
       temp.add(produto);
-
-      setState(() {
-        produtos = temp;
-      });
     }
+
+    setState(() {
+      produtos = temp;
+    });
   }
 }
