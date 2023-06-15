@@ -127,6 +127,7 @@ class _HomeLojasState extends State<HomeLojas> {
       Loja loja = Loja(
         id: resp.id,
         nome_loja: resp.data()['nome_loja'],
+        nome_lojista: resp.data()['nome_lojista'],
         endereco_loja: resp.data()['endereco_loja'],
         ativo: resp.data()['ativo'],
         excluir: resp.data()['excluir'],
