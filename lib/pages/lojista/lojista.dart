@@ -404,6 +404,7 @@ class _LojistaState extends State<Lojista> {
                                     ),
                                     IconButton(
                                         onPressed: () {
+                                          setarController(model.nome_produto, model.preco, model.quantidade);
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
@@ -421,7 +422,7 @@ class _LojistaState extends State<Lojista> {
                                                           onChanged: (text) {
                                                             setState(() {});
                                                           },
-                                                          // controller: resetPasswordEmailController,
+                                                          controller: nomeProduto,
                                                           decoration:
                                                               const InputDecoration(
                                                             border:
@@ -453,13 +454,7 @@ class _LojistaState extends State<Lojista> {
                                                                 value.isEmpty) {
                                                               return 'O valor de email deve ser preenchido';
                                                             }
-                                                            if (!value.contains('@') ||
-                                                                !value.contains(
-                                                                    '.') ||
-                                                                value.length <
-                                                                    4) {
-                                                              return 'O email deve ser válido';
-                                                            }
+
                                                             return null;
                                                           },
                                                         ),
@@ -475,7 +470,7 @@ class _LojistaState extends State<Lojista> {
                                                           onChanged: (text) {
                                                             setState(() {});
                                                           },
-                                                          // controller: resetPasswordEmailController,
+                                                          controller: quantidade,
                                                           decoration:
                                                               const InputDecoration(
                                                             border:
@@ -508,15 +503,56 @@ class _LojistaState extends State<Lojista> {
                                                                 value.isEmpty) {
                                                               return 'O valor de email deve ser preenchido';
                                                             }
-                                                            if (!value.contains('@') ||
-                                                                !value.contains(
-                                                                    '.') ||
-                                                                value.length <
-                                                                    4) {
-                                                              return 'O email deve ser válido';
-                                                            }
                                                             return null;
                                                           },
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 8,
+                                                        ),
+                                                        TextFormField(
+                                                          textAlign:
+                                                          TextAlign.start,
+                                                          onChanged: (text) {
+                                                            setState(() {});
+                                                          },
+                                                          controller: preco,
+                                                          decoration:
+                                                          const InputDecoration(
+                                                            border:
+                                                            OutlineInputBorder(),
+                                                            contentPadding:
+                                                            EdgeInsets
+                                                                .symmetric(
+                                                                horizontal:
+                                                                8,
+                                                                vertical:
+                                                                5),
+                                                            hintText: 'Preço',
+                                                            hintStyle: TextStyle(
+                                                                color: Colors
+                                                                    .black),
+                                                            fillColor:
+                                                            Color.fromRGBO(
+                                                                200,
+                                                                200,
+                                                                200,
+                                                                1),
+                                                            filled: true,
+                                                            prefixIcon: Icon(
+                                                                Icons.email),
+                                                          ),
+                                                          // Validação do campo email
+                                                          validator: (value) {
+                                                            if (value == null ||
+                                                                value.isEmpty) {
+                                                              return 'O valor de email deve ser preenchido';
+                                                            }
+
+                                                            return null;
+                                                          },
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 8,
                                                         ),
                                                       ],
                                                     ),
@@ -525,6 +561,13 @@ class _LojistaState extends State<Lojista> {
                                                 actions: <Widget>[
                                                   TextButton(
                                                     onPressed: () {
+                                                      model.nome_produto = nomeProduto.text;
+                                                      model.quantidade = double.parse(quantidade.text);
+                                                      model.preco = double.parse(preco.text);
+
+                                                      _updateProduto(model);
+                                                      limparController();
+                                                      refresh();
                                                       Navigator.of(context)
                                                           .pop();
                                                     },
@@ -569,10 +612,35 @@ class _LojistaState extends State<Lojista> {
     );
   }
 
+  void setarController(String nomeAtual, double precoAtual, double quantidadeAtual) {
+    nomeProduto.text = nomeAtual;
+    preco.text = precoAtual.toString();
+    quantidade.text = quantidadeAtual.toString();
+  }
+
   void limparController() {
     nomeProduto.clear();
     preco.clear();
     quantidade.clear();
+  }
+
+  String _updateProduto(Produto produto) {
+
+    produtoService.atualizarProduto(produto).then((String? erro) {
+      if (erro == null) {
+        showSnackBar(
+            context: context,
+            mensagem: "Produto atualizado com sucesso!",
+            isErro: false);
+        return produto.id;
+      } else {
+      showSnackBar(context: context, mensagem: erro);
+      return erro;
+      }
+    });
+
+    print('Antes do retorno: ${produto.id.toString()}');
+    return produto.id.toString();
   }
 
   String _createProduto(

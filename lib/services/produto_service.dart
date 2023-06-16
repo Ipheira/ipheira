@@ -20,4 +20,22 @@ class ProdutoService {
     }
     return null;
   }
+
+  Future<String?> atualizarProduto(Produto produto) async {
+    try {
+      await firestore.collection("produtos").doc(produto.id.toString()).update({
+        "nome_produto": produto.nome_produto,
+        "preco": produto.preco,
+        "quantidade": produto.quantidade
+      });
+    } on FirebaseException catch (e) {
+      switch (e.code) {
+        case "not-found":
+          return "Produto não encontrado";
+      }
+      print(e.code);
+      return e.code;
+    }
+    return null;
+  }
 }
