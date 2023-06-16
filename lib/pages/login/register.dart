@@ -294,48 +294,51 @@ class _RegisterFormState extends State<RegisterForm> {
                     ),
                   ],
                 ),
-                IndexedStack(
-                  index: userTypeController,
-                  children: <Widget>[
-                    Container(
-                      width: 0,
-                      height: 0,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 5, horizontal: 15),
-                      child: TextFormField(
-                        textAlign: TextAlign.start,
-                        controller: storeNameController,
-                        onChanged: (text) {
-                          setState(() {});
-                        },
-                        keyboardType: TextInputType.text,
-                        decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 8),
-                            border: OutlineInputBorder(),
-                            hintText: 'Nome da Loja',
-                            hintStyle: TextStyle(color: Colors.black),
-                            fillColor: Color.fromRGBO(200, 200, 200, 1),
-                            filled: true,
-                            prefixIcon: Icon(Icons.store)),
-                        validator: (value) {
-                          if (userTypeController == 1) {
-                            if (value == null || value.isEmpty) {
-                              return null;
-                            }
-                          }
-                          return null;
-                        },
+                Visibility(
+                  visible: userTypeController == 1  ? true : false,
+                  child: IndexedStack(
+                    index: userTypeController,
+                    children: <Widget>[
+                      Container(
+                        height: 0,
+                        width: 0,
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 15),
+                        child: TextFormField(
+                          textAlign: TextAlign.start,
+                          controller: storeNameController,
+                          onChanged: (text) {
+                            setState(() {});
+                          },
+                          keyboardType: TextInputType.text,
+                          decoration: const InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 8),
+                              border: OutlineInputBorder(),
+                              hintText: 'Nome da Loja',
+                              hintStyle: TextStyle(color: Colors.black),
+                              fillColor: Color.fromRGBO(200, 200, 200, 1),
+                              filled: true,
+                              prefixIcon: Icon(Icons.store)),
+                          validator: (value) {
+                            if (userTypeController == 1) {
+                              if (value == null || value.isEmpty) {
+                                return null;
+                              }
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 // Senha
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
                   child: TextFormField(
                     textAlign: TextAlign.start,
                     controller: passwordController,
@@ -360,7 +363,7 @@ class _RegisterFormState extends State<RegisterForm> {
                               : Icons.visibility_off,
                           color: showPassword
                               ? Colors.green
-                              : Color.fromRGBO(104, 104, 104, 1),
+                              : const Color.fromRGBO(104, 104, 104, 1),
                         ),
                         onPressed: () {
                           setState(() {
